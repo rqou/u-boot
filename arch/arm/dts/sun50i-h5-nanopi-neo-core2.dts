@@ -66,10 +66,6 @@
 	status = "okay";
 };
 
-&ehci3 {
-	status = "okay";
-};
-
 &emac {
 	pinctrl-names = "default";
 	pinctrl-0 = <&emac_rgmii_pins>;
@@ -94,10 +90,6 @@
 };
 
 &ohci0 {
-	status = "okay";
-};
-
-&ohci3 {
 	status = "okay";
 };
 
