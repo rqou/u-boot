@@ -32,6 +32,7 @@
 #if CONFIG_IS_ENABLED(DM_GPIO)
 #include <asm-generic/gpio.h>
 #endif
+#include <power/regulator.h>
 
 #define MDIO_CMD_MII_BUSY		BIT(0)
 #define MDIO_CMD_MII_WRITE		BIT(1)
@@ -838,6 +839,22 @@ static int sun8i_emac_eth_probe(struct udevice *dev)
 		return ret;
 
 	sun8i_emac_set_syscon(sun8i_pdata, priv);
+
+#if defined(CONFIG_DM_REGULATOR)
+	struct udevice *phy_supply;
+
+	ret = device_get_supply_regulator(dev, "phy-supply",
+					  &phy_supply);
+	if (ret) {
+		debug("%s: No phy supply\n", dev->name);
+	} else {
+		ret = regulator_set_enable(phy_supply, true);
+		if (ret) {
+			puts("Error enabling phy supply\n");
+			return ret;
+		}
+	}
+#endif
 
 	sun8i_mdio_init(dev->name, dev);
 	priv->bus = miiphy_get_dev_by_name(dev->name);
